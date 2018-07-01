@@ -1,6 +1,6 @@
 # envsubst Dockerfile
 
-This image will process a filename which is passed as an argument and substitute $FOO placeholders with ENVIRONMENT VARIABLE values.  A new file of the same name is written to the `/processed` directory.
+This image will process a filename which is passed as an argument and substitute $FOO placeholders with ENVIRONMENT VARIABLE values. A new file of the same name is written to the `/processed` directory.
 
 local example:
 ```
