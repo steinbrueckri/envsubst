@@ -1,5 +1,5 @@
-FROM centos:7
-RUN yum install -y gettext
+FROM alpine
+RUN apk add --update --no-cache libintl gettext
 
 RUN mkdir /workdir /processed
 
