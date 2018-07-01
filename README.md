@@ -5,7 +5,7 @@ This image will process a filename which is passed as an argument and substitute
 local example:
 ```
 docker build -t envsubst .
-docker run --rm -v $(pwd)/workdir:/workdir -v $(pwd)/processed:/processed -e "VAR_1=A" -e "VAR_2=b" envsubst:latest
+docker run --rm -v $(pwd)/workdir:/workdir -v $(pwd)/processed:/processed -e "VAR_1=A" -e "VAR_2=b" dibi/envsubst:latest
 ```
 
 This can be useful when running on Kubernetes and you wish to update placeholders in config files.  
