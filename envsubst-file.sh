@@ -1,11 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env sh
+set -e
 
 PROCESSED=false
+WORKDIR=/workdir
 
-for i do
+for i in $(ls $WORKDIR); do
   echo "Processing $i ..."
 
-  envsubst < /workdir/$i > /processed/$i
+  envsubst < $WORKDIR/$i > /processed/$i
   PROCESSED=true
 done
 
@@ -14,5 +16,5 @@ ls /processed/
 if [ ! $PROCESSED = true ]
 then
   echo 'No files processed'
-  exit -1
+  exit 1
 fi
