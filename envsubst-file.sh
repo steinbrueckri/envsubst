@@ -1,20 +1,16 @@
 #!/usr/bin/env sh
 set -e
 
-PROCESSED=false
 WORKDIR=/workdir
 
-for i in $(ls $WORKDIR); do
-  echo "Processing $i ..."
-
-  envsubst < $WORKDIR/$i > /processed/$i
-  PROCESSED=true
-done
-
-ls /processed/
-
-if [ ! $PROCESSED = true ]
+if [[ -z $1 ]] 
 then
-  echo 'No files processed'
+  echo "please provide filename in workdir"
   exit 1
 fi
+
+FILENAME=$1
+PROCESSED_FILENAME=${2:-/processed/$FILENAME}
+
+echo "Processing $WORKDIR/$FILENAME to $PROCESSED_FILENAME"
+envsubst < $WORKDIR/$FILENAME > $PROCESSED_FILENAME
