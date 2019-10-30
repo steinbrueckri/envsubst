@@ -1,15 +1,10 @@
-name: Build and Deploy
+name: Build Images
 on: 
-  pull_request:
-    branches:
-    - master
-  push:
-    branches:
-    - master
-
+  - pull_request
+  - push
 jobs:
   build:
-    name: Build
+    name: Build envsubst
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
