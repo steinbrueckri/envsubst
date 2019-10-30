@@ -19,7 +19,5 @@ jobs:
 
     - name: Push the image to GPR
       run: |
-        echo "${{ GITHUB_PACKAGE_REGISTRY_TOKEN }}" | docker login docker.pkg.github.com -u publisher --password-stdin
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u publisher --password-stdin
         docker push docker.pkg.github.com/${{ github.repository }}:latest
-      env:
-        GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
