@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Build the Docker container image
-      run: docker build -t docker.pkg.github.com/${{ github.repository }}:latest .
+      run: docker build -t docker.pkg.github.com/${{ github.repository }}/${ echo ${{ github.repository }} | cut -d/ -f2 }:latest .
 
     - name: Push the image to GPR
       run: |
