@@ -1,4 +1,4 @@
-FROM alpine:3.10.1
+FROM alpine:3.11.0
 RUN apk add --update --no-cache libintl gettext
 
 WORKDIR /workdir
