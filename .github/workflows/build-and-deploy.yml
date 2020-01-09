@@ -1,19 +1,51 @@
-name: Build Images
-on: 
-  - push
-jobs:
-  build:
 
-    name: Build envsubst
+name: Build, push and deploy
+on: push
+env:
+  IMAGE_TAG: ${{ github.sha }}
+  IMAGE: ${{ github.repository }}
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Run mdl tests
+        run: date
+      - name: hadolint on pr
+        uses: burdzwastaken/hadolint-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HADOLINT_ACTION_DOCKERFILE_FOLDER: .
+      - name: Run container-structure-test tests
+        run: date
+  test-build-and-push:
+    name: Test, build and push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build and push Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker build -t ${IMAGE}:${IMAGE_TAG} .
+          DOCKERHUB_USERNAME=`echo "${{ IMAGE }}" | awk -F"/" '{print $1}'`
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker push ${IMAGE}:${IMAGE_TAG}
+  release:
+    name: Create release
+    needs: test-build-and-push
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-
-    - name: Build the Docker container image
-      run: docker build -t ${{ github.repository }}/latest .
-
-    - name: Push the image to Dockerhub
-      run: |
-        dockerhub_username=`echo "${{ github.repository }}" | awk -F"/" '{print $1}'`
-        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $dockerhub_username --password-stdin
-        docker push ${{ github.repository }}:latest
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release/${{ env.IMAGE_TAG }}
+          release_name: Release to prod
+          prerelease: false
