@@ -16,4 +16,4 @@ jobs:
       run: |
         dockerhub_username=`echo "${{ github.repository }}" | awk -F"/" '{print $1}'`
         echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $dockerhub_username --password-stdin
-        docker push ${{ github.repository }}/latest
+        docker push ${{ github.repository }}:latest
