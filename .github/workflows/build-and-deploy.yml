@@ -1,18 +1,19 @@
 name: Build Images
 on: 
-  - pull_request
   - push
 jobs:
   build:
+
     name: Build envsubst
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
 
     - name: Build the Docker container image
-      run: docker build -t docker.pkg.github.com/${{ github.repository }}/envsubst:latest .
+      run: docker build -t ${{ github.repository }}/latest .
 
-    - name: Push the image to GPR
+    - name: Push the image to Dockerhub
       run: |
-        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u publisher --password-stdin
-        docker push docker.pkg.github.com/${{ github.repository }}/envsubst:latest
+        dockerhub_username=`echo "${{ github.repository }}" | awk -F"/" '{print $1}'`
+        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $dockerhub_username --password-stdin
+        docker push ${{ github.repository }}/latest
