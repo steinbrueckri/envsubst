@@ -11,6 +11,9 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Bump version and push tag
         id: dump-version
         uses: mathieudutour/github-tag-action@v3
