@@ -30,7 +30,7 @@ spec:
           mountPath: /config
       initContainers:
       - name: init-config
-        image: steinbrueckri/envsubst
+        image: steinbrueckri/envsubst:latest
         env:
         - name: mySecretVar
           valueFrom:

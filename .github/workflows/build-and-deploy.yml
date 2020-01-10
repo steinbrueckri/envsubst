@@ -5,47 +5,85 @@ env:
   IMAGE_TAG: ${{ github.sha }}
   IMAGE: ${{ github.repository }}
 jobs:
-  test:
+#------------------------------------------------------------------------------
+# Pre Build Testing
+#------------------------------------------------------------------------------
+  pre-build-tests:
     name: Run tests
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
-      - name: Run mdl tests
-        run: date
-      - name: hadolint on pr
+        uses: actions/checkout@v2
+
+      - name: Markdown test
+        uses: actionshub/markdownlint@master
+
+      - name: Dockerfile test
         uses: burdzwastaken/hadolint-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HADOLINT_ACTION_DOCKERFILE_FOLDER: .
-      - name: Run container-structure-test tests
-        run: date
-  test-build-and-push:
-    name: Test, build and push
+
+#------------------------------------------------------------------------------
+# Build
+#------------------------------------------------------------------------------
+  build:
+    name: Build Image
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+
       - name: Build and push Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           docker build -t ${IMAGE}:${IMAGE_TAG} .
           DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker tag ${{ steps.get_version.outputs.VERSION }}
           docker push ${IMAGE}:${IMAGE_TAG}
-  release:
-    name: Create release
-    needs: test-build-and-push
+
+#------------------------------------------------------------------------------
+# Post Build Tests
+#------------------------------------------------------------------------------
+  post-build-tests:
+    name: Run tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Run container-structure-test tests
+        run: |
+          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && chmod +x container-structure-test-linux-amd64 && mkdir -p $HOME/bin && export PATH=$PATH:$HOME/bin && mv container-structure-test-linux-amd64 $HOME/bin/container-structure-test
+          container-structure-test test --image ${IMAGE}:${IMAGE_TAG} --config structure_test.yaml
+
+#------------------------------------------------------------------------------
+# Release
+#------------------------------------------------------------------------------
+  release:
+    name: Create release
+    needs: post-build-tests
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Tag and push Docker image
+        run: |
+          DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          # create version tag
+          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:${{ steps.get_version.outputs.VERSION }}
+          # create latest tag
+          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:latest
+          # 
+          docker push ${IMAGE}
+
       - name: Create release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: release/${{ env.IMAGE_TAG }}
-          release_name: Release to prod
+          release_name: Release ${{ env.IMAGE_TAG }}
           prerelease: false
