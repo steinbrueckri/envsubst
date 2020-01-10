@@ -1,0 +1,31 @@
+
+name: Test
+on: push
+env:
+  IMAGE_TAG: ${{ github.sha }}
+  IMAGE: ${{ github.repository }}
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Markdown test
+        uses: actionshub/markdownlint@master
+
+      - name: Dockerfile test
+        uses: burdzwastaken/hadolint-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HADOLINT_ACTION_DOCKERFILE_FOLDER: .
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${IMAGE}:${IMAGE_TAG} .
+
+      - name: Run container-structure-test tests
+        run: |
+          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && chmod +x container-structure-test-linux-amd64 && mkdir -p $HOME/bin && export PATH=$PATH:$HOME/bin && mv container-structure-test-linux-amd64 $HOME/bin/container-structure-test
+          container-structure-test test --image ${IMAGE}:${IMAGE_TAG} --config structure_test.yaml
