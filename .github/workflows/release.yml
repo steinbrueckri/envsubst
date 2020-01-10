@@ -24,11 +24,11 @@ jobs:
         run: |
           DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          # create version tag
-          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:${{ steps.dump-version.outputs.new_tag }}
-          # create latest tag
-          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:latest
-          # push images
+          # docker build
+          docker build .t ${IMAGE}:${{ steps.dump-version.outputs.new_tag }} .
+          # docker create latest tag
+          docker tag ${IMAGE}:${{ steps.dump-version.outputs.new_tag }} ${IMAGE}:latest
+          # docker push images
           docker push ${IMAGE}
 
       - name: Create release
