@@ -37,10 +37,6 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t ${IMAGE}:${IMAGE_TAG} .
-          DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker tag ${{ steps.get_version.outputs.VERSION }}
-          docker push ${IMAGE}:${IMAGE_TAG}
 
 #------------------------------------------------------------------------------
 # Post Build Tests
