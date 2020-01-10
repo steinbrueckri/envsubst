@@ -46,6 +46,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Run container-structure-test tests
         run: |
           curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && chmod +x container-structure-test-linux-amd64 && mkdir -p $HOME/bin && export PATH=$PATH:$HOME/bin && mv container-structure-test-linux-amd64 $HOME/bin/container-structure-test
@@ -72,7 +75,7 @@ jobs:
           docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:${{ steps.get_version.outputs.VERSION }}
           # create latest tag
           docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:latest
-          # 
+          # push images
           docker push ${IMAGE}
 
       - name: Create release
@@ -83,3 +86,8 @@ jobs:
           tag_name: release/${{ env.IMAGE_TAG }}
           release_name: Release ${{ env.IMAGE_TAG }}
           prerelease: false
+
+#      - name: Bump version and push tag
+#        uses: mathieudutour/github-tag-action@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
