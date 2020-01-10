@@ -1,0 +1,40 @@
+name: Bump version
+on:
+  push:
+    branches:
+      - master
+env:
+  IMAGE_TAG: ${{ github.sha }}
+  IMAGE: ${{ github.repository }}
+jobs:
+  release:
+    name: Create release
+    needs: post-build-tests
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bump version and push tag
+        id: dump-version
+        uses: mathieudutour/github-tag-action@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push Docker image
+        run: |
+          DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          # create version tag
+          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:${{ steps.dump-version.outputs.new_tag }}
+          # create latest tag
+          docker tag ${IMAGE}:${IMAGE_TAG} ${IMAGE}:latest
+          # push images
+          docker push ${IMAGE}
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release/${{ env.IMAGE_TAG }}
+          release_name: Release ${{ env.IMAGE_TAG }}
+          prerelease: false

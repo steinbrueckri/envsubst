@@ -1,0 +1,17 @@
+schemaVersion: 2.0.0
+
+fileExistenceTests:
+  - name: 'envsubst-file.sh exist ...'
+    path: /envsubst-file.sh
+    shouldExist: true
+    uid: 0
+    gid: 0
+
+fileContentTests:
+  - name: 'envsubst-file.sh has ...'
+    path: /envsubst-file.sh
+    expectedContents: ['.*\$1.*','.*\${2.*']
+
+metadataTest:
+  entrypoint: ["/envsubst-file.sh"]
+  workdir: "/workdir"
