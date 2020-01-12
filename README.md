@@ -1,16 +1,16 @@
-# envsubst Dockerfile
+# Docker image for 'envsubst'
 
 This image will process a filename which is passed as an argument and substitute $FOO placeholders with ENVIRONMENT VARIABLE values. A new file of the same name is written to the `/processed` directory.
 
-# Examples
+## Examples
 
-## Local
+### Local
 
 ```sh
 docker run --rm -v $(pwd)/workdir:/workdir -v $(pwd)/processed:/processed -e "VAR_1=A" -e "VAR_2=b" steinbrueckri/envsubst:latest
 ```
 
-## K8s
+### K8s
 
 This can be useful when running on Kubernetes and you wish to update placeholders in config files.
 
