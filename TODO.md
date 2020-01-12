@@ -1,1 +1,0 @@
-- [ ] Add Dependabot config (.dependabot/config.yml)
