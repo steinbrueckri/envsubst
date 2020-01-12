@@ -21,7 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HADOLINT_ACTION_DOCKERFILE_FOLDER: .
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         run: |
           docker build -t ${IMAGE}:${IMAGE_TAG} .
 
