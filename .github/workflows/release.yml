@@ -36,6 +36,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: release/${{ env.IMAGE_TAG }}
-          release_name: Release ${{ env.IMAGE_TAG }}
+          tag_name: release/${{ steps.dump-version.outputs.new_tag }}
+          release_name: Release ${{ steps.dump-version.outputs.new_tag }}
           prerelease: false
