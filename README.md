@@ -1,4 +1,5 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=steinbrueckri/envsubst)](https://dependabot.com)
+[![](https://images.microbadger.com/badges/version/steinbrueckri/envsubst.svg)](https://microbadger.com/images/steinbrueckri/envsubst)
 
 # Docker image for 'envsubst'
 
