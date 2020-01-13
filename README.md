@@ -1,16 +1,18 @@
-# envsubst Dockerfile
+# Docker image for 'envsubst'
 
 This image will process a filename which is passed as an argument and substitute $FOO placeholders with ENVIRONMENT VARIABLE values. A new file of the same name is written to the `/processed` directory.
 
-local example:
+## Examples
+
+### Local
 
 ```sh
-docker build -t envsubst .
-
-docker run --rm -v $(pwd)/workdir:/workdir -v $(pwd)/processed:/processed -e "VAR_1=A" -e "VAR_2=b" dibi/envsubst:latest
+docker run --rm -v $(pwd)/workdir:/workdir -v $(pwd)/processed:/processed -e "VAR_1=A" -e "VAR_2=b" steinbrueckri/envsubst:latest
 ```
 
-This can be useful when running on Kubernetes and you wish to update placeholders in config files.  
+### K8s
+
+This can be useful when running on Kubernetes and you wish to update placeholders in config files.
 
 This image can run as an init-container after mounting a configmap into `/workdir`.  Because config map files are readonly you'll also need to mount an `emptyDir: {}` volume to the init-container `/processed` folder as well as in the main pod container where you wish your new config to be mounted.
 
@@ -30,7 +32,7 @@ spec:
           mountPath: /config
       initContainers:
       - name: init-config
-        image: dibi/envsubst
+        image: steinbrueckri/envsubst:latest
         env:
         - name: mySecretVar
           valueFrom:
