@@ -53,3 +53,12 @@ spec:
       - name: config
         emptyDir: {}
 ```
+
+## Release
+
+- create new branch
+- make your changes, if needed
+- commit your changes like
+  - Patch Release: `fix(script): validate input file to prevent empty files`
+  - Minor Release: `feat(dockerimage): add open for multiple input files`
+  - Major Release [look her](https://github.com/mathieudutour/github-tag-action/blob/master/README.md)
