@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - name: Markdown test
         uses: actionshub/markdownlint@master
@@ -36,6 +37,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - name: Bump version and push tag
         id: dump-version
