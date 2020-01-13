@@ -53,12 +53,3 @@ jobs:
           docker tag ${IMAGE}:${{ steps.dump-version.outputs.new_tag }} ${IMAGE}:latest
           # docker push images
           docker push ${IMAGE}
-
-      - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: release/${{ steps.dump-version.outputs.new_tag }}
-          release_name: Release ${{ steps.dump-version.outputs.new_tag }}
-          prerelease: false
