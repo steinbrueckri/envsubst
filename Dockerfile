@@ -1,4 +1,4 @@
-FROM alpine:3.11.5
+FROM alpine:3.11.6
 RUN apk add --update --no-cache libintl=0.20.1-r2 gettext=0.20.1-r2
 WORKDIR /workdir
 COPY envsubst-file.sh /
