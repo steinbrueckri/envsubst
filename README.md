@@ -63,3 +63,9 @@ spec:
   - Patch Release: `fix(script): validate input file to prevent empty files`
   - Minor Release: `feat(dockerimage): add open for multiple input files`
   - Major Release [look her](https://github.com/mathieudutour/github-tag-action/blob/master/README.md)
+
+## TODOs
+
+- [ ] Add [ShellCheck](https://www.shellcheck.net/) to CI
+- [ ] Write some tests with [BATS](https://github.com/bats-core/bats-core)
+  - [ ] Move container-structure-test from GHA Worflow to the BATS test
