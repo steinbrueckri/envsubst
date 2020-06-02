@@ -4,10 +4,10 @@ set -e
 PROCESSED=false
 WORKDIR=/workdir
 
-for i in $(ls $WORKDIR); do
+for i in $WORKDIR; do
   echo "Processing $i ..."
 
-  envsubst < $WORKDIR/$i > /processed/$i
+  envsubst < "$WORKDIR/$i" > "/processed/$i"
   PROCESSED=true
 done
 
