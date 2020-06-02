@@ -1,5 +1,6 @@
 FROM alpine:3.11.6
-RUN apk add --update --no-cache libintl=0.20.1-r2 gettext=0.20.1-r2
+# hadolint ignore=DL3018
+RUN apk add --update --no-cache libintl gettext
 WORKDIR /workdir
 COPY envsubst-file.sh /
 ENTRYPOINT ["/envsubst-file.sh"]
