@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Markdown test
-        uses: actionshub/markdownlint@v1.0.0
+        uses: actionshub/markdownlint@1.2.2
 
       - name: Dockerfile test
         uses: burdzwastaken/hadolint-action@1.6.0
