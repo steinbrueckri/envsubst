@@ -15,7 +15,7 @@ jobs:
         uses: actionshub/markdownlint@2.0.2
 
       - name: Dockerfile test
-        uses: burdzwastaken/hadolint-action@1.10.0
+        uses: burdzwastaken/hadolint-action@1.14.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HADOLINT_ACTION_DOCKERFILE_FOLDER: .
