@@ -1,4 +1,4 @@
-FROM alpine:3.13.5
+FROM alpine:3.14.0
 # hadolint ignore=DL3018
 RUN apk add --update --no-cache libintl gettext
 WORKDIR /workdir
