@@ -11,9 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Markdown test
-        uses: actionshub/markdownlint@2.0.2
-
       - name: Dockerfile test
         uses: burdzwastaken/hadolint-action@1.14.0
         env:
