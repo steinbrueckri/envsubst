@@ -1,20 +1,22 @@
 #!/usr/bin/env sh
 set -e
 
-PROCESSED=false
 WORKDIR=/workdir
+OUTPUTDIR=/processed
 
-for i in $(ls $WORKDIR); do
-  echo "Processing $i ..."
-
-  envsubst < "$WORKDIR/$i" > "/processed/$i"
-  PROCESSED=true
-done
-
-ls /processed/
-
-if [ ! $PROCESSED = true ]
-then
-  echo 'No files processed'
+if ! find "$WORKDIR" -type f -print -quit | grep -q .; then
+  echo "No files to process"
   exit 1
 fi
+
+find "$WORKDIR" -type f | while read -r file; do
+  RELATIVE_PATH="${file#$WORKDIR/}"
+  OUTPUT_PATH="$OUTPUTDIR/$RELATIVE_PATH"
+
+  echo "Processing $RELATIVE_PATH"
+
+  mkdir -p "$(dirname "$OUTPUT_PATH")"
+  envsubst < "$file" > "$OUTPUT_PATH"
+done
+
+echo "All files have been processed"
