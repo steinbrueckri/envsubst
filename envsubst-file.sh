@@ -9,7 +9,7 @@ if ! find "$WORKDIR" -type f -print -quit | grep -q .; then
   exit 1
 fi
 
-find "$WORKDIR" -type f | while read -r file; do
+find -L "$WORKDIR" -name '..*' -prune -o -type f -print | while read -r file; do
   RELATIVE_PATH="${file#$WORKDIR/}"
   OUTPUT_PATH="$OUTPUTDIR/$RELATIVE_PATH"
 
