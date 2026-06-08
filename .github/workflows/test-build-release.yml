@@ -7,29 +7,28 @@ jobs:
   tests:
     name: Run tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Dockerfile test
-        uses: burdzwastaken/hadolint-action@1.14.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HADOLINT_ACTION_DOCKERFILE_FOLDER: .
+      - name: Install just
+        uses: extractions/setup-just@v2
 
-      - name: Build Docker image
-        run: |
-          docker build -t ${IMAGE}:${IMAGE_TAG} .
+      - name: Install bats
+        uses: bats-core/bats-action@3.0.0
 
-      - name: Run container-structure-test tests
-        run: |
-          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && chmod +x container-structure-test-linux-amd64 && mkdir -p $HOME/bin && export PATH=$PATH:$HOME/bin && mv container-structure-test-linux-amd64 $HOME/bin/container-structure-test
-          container-structure-test test --image ${IMAGE}:${IMAGE_TAG} --config structure_test.yaml
+      - name: Run tests
+        run: IMAGE=${{ env.IMAGE }}:${{ env.IMAGE_TAG }} just test
+
   release:
     name: Create release
     needs: tests
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -42,11 +41,8 @@ jobs:
 
       - name: Tag and push Docker image
         run: |
-          DOCKERHUB_USERNAME=`echo "${IMAGE}" | awk -F"/" '{print $1}'`
+          DOCKERHUB_USERNAME=$(echo "${IMAGE}" | awk -F"/" '{print $1}')
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          # docker build
           docker build -t ${IMAGE}:${{ steps.dump-version.outputs.new_tag }} .
-          # docker create latest tag
           docker tag ${IMAGE}:${{ steps.dump-version.outputs.new_tag }} ${IMAGE}:latest
-          # docker push images
           docker push --all-tags ${IMAGE}
