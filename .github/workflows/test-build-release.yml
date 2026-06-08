@@ -20,7 +20,7 @@ jobs:
         uses: bats-core/bats-action@3.0.0
 
       - name: Run tests
-        run: IMAGE=${{ env.IMAGE }}:${{ env.IMAGE_TAG }} just test
+        run: just test
 
   release:
     name: Create release

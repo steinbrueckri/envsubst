@@ -19,6 +19,7 @@ teardown() {
 
 run_envsubst() {
   docker run --rm \
+    --user "$(id -u):$(id -g)" \
     -v "$WORKDIR:/workdir" \
     -v "$PROCESSED:/processed" \
     "$@" \
