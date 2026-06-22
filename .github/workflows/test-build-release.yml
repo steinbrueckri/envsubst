@@ -15,7 +15,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install just
         uses: extractions/setup-just@v4
@@ -35,7 +35,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Bump version and push tag
         id: dump-version
